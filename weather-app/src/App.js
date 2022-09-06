@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 
 const api = {
   key: "465385b5b1af1fba42db1de33887dcfe",
@@ -9,17 +9,32 @@ function App() {
   const [query, setQuery] = useState("");
   const [weather, setWeather] = useState({});
 
-  const search = (evt) => {
-    if (evt.key === "Enter") {
-      fetch(`${api.base}weather?q=${query}&units=metric&APPID=${api.key}`)
-        .then((response) => response.json())
-        .then((result) => {
+  useEffect(() => {
+    if(query.length > 4) {
+       fetch(`${api.base}weather?q=${query}&units=metric&APPID=${api.key}`)
+      .then((response) => 
+        response.json()
+      )
+      .then((result) => {
+        if(result.cod != "404") {
           setWeather(result);
-          setQuery("");
           console.log(result);
-        });
-    }
-  };
+        }
+      })   
+   } 
+  },[query])
+
+  // const search = (evt) => {
+  //   if (evt.key === "Enter") {
+  //     fetch(`${api.base}weather?q=${query}&units=metric&APPID=${api.key}`)
+  //       .then((response) => response.json())
+  //       .then((result) => {
+  //         setWeather(result);
+  //         setQuery("");
+  //         console.log(result);
+  //       });
+  //   }
+  // };
 
   const dateBuilder = (d) => {
     let months = [
@@ -72,7 +87,7 @@ function App() {
             placeholder="Search.."
             onChange={(e) => setQuery(e.target.value)}
             value={query}
-            onKeyPress={search}
+
           />
         </div>
         {typeof weather.main != "undefined" ? (
